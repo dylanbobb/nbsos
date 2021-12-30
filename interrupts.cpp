@@ -15,7 +15,24 @@ uint32_t InterruptManager::handleInterrupt(uint8_t interrupt, uint32_t esp)
 
 uint32_t InterruptManager::doHandleInterrupt(uint8_t interrupt, uint32_t esp)
 {
-    kprintf("Interrupt received\n");
+    // only display non timer interrupts
+    if (interrupt != 0x20)
+    {
+        kprintf("Interrupt received\n");
+    }
+
+    // if hardware interrupt
+    if (0x20 <= interrupt && interrupt < 0x30)
+    {
+        // aknowledge the interrupt
+        picMasterCommand.write(0x20);
+
+        // if interrupt came from slave pic
+        if(0x28 <= interrupt && interrupt < 0x30)
+        {
+            picSlaveCommand.write(0x20);
+        }
+    }
     return esp;
 }
 
