@@ -74,8 +74,8 @@ uint32_t KeyboardDriver::handleInterrupt(uint32_t esp)
 
         case 0x1C: kprintf("\n"); break;
         case 0x39: kprintf(" "); break;
-        case 0x2A: shift = true; break;
-        case 0xAA: shift = false; break;
+        case 0x2A: case 0x36: shift = true; break;
+        case 0xAA: case 0xB6: shift = false; break;
         default:
             if (key >= 0x80)
                 break;
