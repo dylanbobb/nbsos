@@ -40,7 +40,12 @@ void InterruptManager::activate()
 
 void InterruptManager::deactivate()
 {
-    asm("cli");
+    if (activeInterruptManager == this)
+    {
+        activeInterruptManager = 0;
+        asm("cli")
+    }
+    
 }
 
 InterruptManager::InterruptManager(GlobalDescriptorTable* gdt)
