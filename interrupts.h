@@ -4,11 +4,26 @@
     #include "gdt.h"
     #include "types.h"
     #include "port.h"
+    class InterruptManager;
+
+    class InterruptHandler
+    {
+        protected:
+            uint8_t interrupt;
+            InterruptManager* interruptManager;
+
+            InterruptHandler(uint8_t interrupt, InterruptManager* interruptManager);
+            ~InterruptHandler();
+        public:
+            uint32_t handleInterrupt(uint32_t esp);
+    };
 
     class InterruptManager
     {
+        friend class InterruptHandler;
         protected:
             static InterruptManager* activeInterruptManager; 
+            InterruptHandler* handlers[256];
 
             struct GateDescriptor
             {

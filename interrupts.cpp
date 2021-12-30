@@ -2,6 +2,24 @@
 
 void kprintf(char* str);
 
+InterruptHandler::InterruptHandler(uint8_t interrupt, InterruptManager* interruptManager)
+{
+    this->interrupt = interrupt;
+    this->interruptManager = interruptManager;
+    interruptManager->handlers[interrupt] = this;
+}
+
+InterruptHandler::~InterruptHandler()
+{
+    if (this->interruptManager->handlers[this->interrupt] == this)
+        this->interruptManager->handlers[this->interrupt] = 0;
+}
+
+uint32_t InterruptHandler::handleInterrupt(uint32_t esp)
+{
+    return esp;
+}
+
 uint32_t InterruptManager::handleInterrupt(uint8_t interrupt, uint32_t esp)
 {
     if (activeInterruptManager != 0)
@@ -15,10 +33,17 @@ uint32_t InterruptManager::handleInterrupt(uint8_t interrupt, uint32_t esp)
 
 uint32_t InterruptManager::doHandleInterrupt(uint8_t interrupt, uint32_t esp)
 {
-    // only display non timer interrupts
-    if (interrupt != 0x20)
+    if (handlers[interrupt] != 0)
     {
-        kprintf("Interrupt received\n");
+        esp = handlers[interrupt]->handleInterrupt(esp);  
+    }
+    else if (interrupt != 0x20) // only display error for non-timer interrupts
+    {
+        char* error = "Unhandled Interrupt 0x00";
+        char* hex = "0123456789ABCDEF";
+        error[22] = hex[(interrupt >> 4) & 0xF];
+        error[23] = hex[interrupt & 0xF];
+        kprintf(error);
     }
 
     // if hardware interrupt
@@ -87,6 +112,7 @@ InterruptManager::InterruptManager(GlobalDescriptorTable* gdt)
 
     for (uint16_t i =0; i < 256; i++)
     {
+        handlers[i] = 0;
         setInterruptDescriptorTableEntry(
             i,
             codeSegmentSelector,
