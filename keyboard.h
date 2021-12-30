@@ -3,9 +3,10 @@
 
     #include "types.h"
     #include "interrupts.h"
+    #include "driver.h"
     #include "port.h"
 
-    class KeyboardDriver : public InterruptHandler
+    class KeyboardDriver : public InterruptHandler, public Driver
     {
         Port8Bit dataPort;
         Port8Bit commandPort;
@@ -13,5 +14,6 @@
             KeyboardDriver(InterruptManager* manager);
             ~KeyboardDriver();
             virtual uint32_t handleInterrupt(uint32_t esp);
+            virtual void activate();
     };
 #endif

@@ -7,6 +7,10 @@ MouseDriver::MouseDriver(InterruptManager* manager)
   dataPort(0x60),
   commandPort(0x64)
 {
+}
+
+void MouseDriver::activate()
+{
     offset = 0;
     buttons = 0;
 

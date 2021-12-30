@@ -7,6 +7,10 @@ KeyboardDriver::KeyboardDriver(InterruptManager* manager)
   dataPort(0x60),
   commandPort(0x64)
 {
+}
+
+void KeyboardDriver::activate()
+{
     while(commandPort.read() & 0x1)
         dataPort.read(); // clear out the buffer
     commandPort.write(0xAE); // interrupts

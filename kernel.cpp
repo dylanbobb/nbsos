@@ -1,6 +1,7 @@
 #include "types.h"
 #include "gdt.h"
 #include "interrupts.h"
+#include "driver.h"
 #include "keyboard.h"
 #include "mouse.h"
 
@@ -55,14 +56,27 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
 {
     kprintf("Welcome to NBSOS!\n");
     kprintf("Getting things setup...\n");
+
     kprintf("Setting up GDT...\n");
     GlobalDescriptorTable gdt;
+
     kprintf("Setting up IDT...\n");
     InterruptManager interrupts(&gdt);
+
+    kprintf("Setting up Driver Management...\n");
+    DriverManager driverManager;
+
     kprintf("Setting up Keyboard...\n");
     KeyboardDriver keyboard(&interrupts);
+    driverManager.addDriver(&keyboard);
+
     kprintf("Setting up Mouse...\n");
     MouseDriver mouse(&interrupts);
+    driverManager.addDriver(&mouse);
+
+    kprintf("Activating Drivers...\n");
+    driverManager.activateAll();
+
     kprintf("Activating interrupts...\n");
     interrupts.activate();
 
