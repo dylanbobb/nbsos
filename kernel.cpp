@@ -41,6 +41,15 @@ void kprintf(char* str)
     }
 }
 
+void kprintHex(uint8_t hex)
+{
+    char* msg = "00\n";
+    char* hexStr = "0123456789ABCDEF";
+    msg[0] = hexStr[(hex >> 4) & 0xF];
+    msg[1] = hexStr[hex & 0xF];
+    kprintf(msg);
+}
+
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
 extern "C" constructor end_ctors;

@@ -1,6 +1,7 @@
 #include "interrupts.h"
 
 void kprintf(char* str);
+void kprintHex(uint8_t);
 
 InterruptHandler::InterruptHandler(uint8_t interrupt, InterruptManager* interruptManager)
 {
@@ -39,11 +40,9 @@ uint32_t InterruptManager::doHandleInterrupt(uint8_t interrupt, uint32_t esp)
     }
     else if (interrupt != 0x20) // only display error for non-timer interrupts
     {
-        char* error = "Unhandled Interrupt 0x00";
-        char* hex = "0123456789ABCDEF";
-        error[22] = hex[(interrupt >> 4) & 0xF];
-        error[23] = hex[interrupt & 0xF];
-        kprintf(error);
+        kprintf("Unhandled interrupt 0x");
+        kprintHex(interrupt);
+        kprintf("\n");
     }
 
     // if hardware interrupt

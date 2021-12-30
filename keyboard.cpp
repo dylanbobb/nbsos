@@ -1,6 +1,7 @@
 #include "keyboard.h"
 
 void kprintf(char*);
+void kprintHex(uint8_t);
 
 KeyboardDriver::KeyboardDriver(InterruptManager* manager)
 : InterruptHandler(0x21, manager),
@@ -83,11 +84,9 @@ uint32_t KeyboardDriver::handleInterrupt(uint32_t esp)
         default:
             if (key >= 0x80)
                 break;
-            char* msg = "Keyboard 0x00\n";
-            char* hex = "0123456789ABCDEF";
-            msg[11] = hex[(key >> 4) & 0xF];
-            msg[12] = hex[key & 0xF];
-            kprintf(msg);
+            kprintf("Keyboard 0x");
+            kprintHex(key);
+            kprintf("\n");
             break;
     }
 
