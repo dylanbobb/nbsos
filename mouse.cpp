@@ -61,6 +61,19 @@ uint32_t MouseDriver::handleInterrupt(uint32_t esp)
         VMem[80*y+x] = ((VMem[80*y+x] & 0xF000) >> 4) |
                        ((VMem[80*y+x] & 0x0F00) << 4) |
                        ((VMem[80*y+x] & 0x00FF));
+
+        for (uint8_t i = 0; i < 3; i++)
+        {
+            if ((buffer[0] & (0x1 << i)) && !(buttons & (0x1 << i)))
+            {
+                kprintf("Mouse button pressed\n");
+            }
+            else if (!(buffer[0] & (0x1 << i)) && (buttons & (0x1 << i)))
+            {
+                kprintf("Mouse button released\n");
+            }
+        }
+        buttons = buffer[0];
     }
 
     return esp;
