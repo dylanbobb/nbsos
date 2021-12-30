@@ -88,6 +88,7 @@ uint32_t KeyboardDriver::handleInterrupt(uint32_t esp)
             msg[11] = hex[(key >> 4) & 0xF];
             msg[12] = hex[key & 0xF];
             kprintf(msg);
+            break;
     }
 
     return esp;
