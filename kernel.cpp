@@ -2,6 +2,7 @@
 #include "gdt.h"
 #include "interrupts.h"
 #include "keyboard.h"
+#include "mouse.h"
 
 void kprintf(char* str)
 {
@@ -60,6 +61,8 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     InterruptManager interrupts(&gdt);
     kprintf("Setting up Keyboard...\n");
     KeyboardDriver keyboard(&interrupts);
+    kprintf("Setting up Mouse...\n");
+    MouseDriver mouse(&interrupts);
     kprintf("Activating interrupts...\n");
     interrupts.activate();
 

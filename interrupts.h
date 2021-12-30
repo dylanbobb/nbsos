@@ -65,5 +65,6 @@
             static void ignoreInterruptRequest();
             static void handleInterruptRequest0x00();
             static void handleInterruptRequest0x01();
+            static void handleInterruptRequest0x0C();
     };
 #endif

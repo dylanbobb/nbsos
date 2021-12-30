@@ -140,6 +140,15 @@ InterruptManager::InterruptManager(GlobalDescriptorTable* gdt)
             IDT_INTERRUPT_GATE
     );
 
+    // mouse
+    setInterruptDescriptorTableEntry(
+            0x2C,
+            codeSegmentSelector,
+            &handleInterruptRequest0x0C,
+            0,
+            IDT_INTERRUPT_GATE
+    );
+
     // remap PIC
     picMasterCommand.write(0x11);
     picSlaveCommand.write(0x11);
