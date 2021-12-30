@@ -4,13 +4,24 @@ void kprintf(char* str);
 
 uint32_t InterruptManager::handleInterrupt(uint8_t interrupt, uint32_t esp)
 {
+    if (activeInterruptManager != 0)
+    {
+        // not the prettiest solution to have handleInterrupt AND doHandleInterrupt
+        // but, since we're coming from an assembly intterupt handler, we need to jump from a static to a non-static context
+        return activeInterruptManager->doHandleInterrupt(interrupt, esp);
+    }
+    return esp;
+}
+
+uint32_t InterruptManager::doHandleInterrupt(uint8_t interrupt, uint32_t esp)
+{
     kprintf("Interrupt received\n");
     return esp;
 }
 
 InterruptManager::GateDescriptor InterruptManager::interruptDescriptorTable[256];
 
-InterruptManager InterruptManager::activeInterruptManager = 0;
+InterruptManager* InterruptManager::activeInterruptManager = 0;
 
 void InterruptManager::setInterruptDescriptorTableEntry(
     uint8_t interruptNumber,
@@ -43,7 +54,7 @@ void InterruptManager::deactivate()
     if (activeInterruptManager == this)
     {
         activeInterruptManager = 0;
-        asm("cli")
+        asm("cli");
     }
     
 }
