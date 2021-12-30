@@ -1,6 +1,7 @@
 #include "types.h"
 #include "gdt.h"
 #include "interrupts.h"
+#include "keyboard.h"
 
 void kprintf(char* str)
 {
@@ -57,6 +58,9 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     GlobalDescriptorTable gdt;
     kprintf("Setting up IDT...\n");
     InterruptManager interrupts(&gdt);
+    kprintf("Setting up Keyboard...\n");
+    KeyboardDriver keyboard(&interrupts);
+    kprintf("Activating interrupts...\n");
     interrupts.activate();
 
 
