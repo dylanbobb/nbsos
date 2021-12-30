@@ -4,11 +4,13 @@ void kprintf(char* str);
 
 uint32_t InterruptManager::handleInterrupt(uint8_t interrupt, uint32_t esp)
 {
-    kprintf("Interrupt: ");
+    kprintf("Interrupt received\n");
     return esp;
 }
 
 InterruptManager::GateDescriptor InterruptManager::interruptDescriptorTable[256];
+
+InterruptManager InterruptManager::activeInterruptManager = 0;
 
 void InterruptManager::setInterruptDescriptorTableEntry(
     uint8_t interruptNumber,
@@ -28,7 +30,17 @@ void InterruptManager::setInterruptDescriptorTableEntry(
 
 void InterruptManager::activate()
 {
+    if (activeInterruptManager != 0)
+    {
+        activeInterruptManager->deactivate();
+    }
+    activeInterruptManager = this;
     asm("sti");
+}
+
+void InterruptManager::deactivate()
+{
+    asm("cli");
 }
 
 InterruptManager::InterruptManager(GlobalDescriptorTable* gdt)
