@@ -50,6 +50,17 @@ void kprintHex(uint8_t hex)
     kprintf(msg);
 }
 
+class KernelKeyboardEventHandler : public KeyboardEventHandler
+{
+    public:
+        void onKeyDown(char key)
+        {
+            char* str = " ";
+            str[0] = key;
+            kprintf(str);
+        }
+};
+
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
 extern "C" constructor end_ctors;
@@ -76,7 +87,8 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     DriverManager driverManager;
 
     kprintf("Setting up Keyboard...\n");
-    KeyboardDriver keyboard(&interrupts);
+    KernelKeyboardEventHandler keyboardHandler;
+    KeyboardDriver keyboard(&interrupts, &keyboardHandler);
     driverManager.addDriver(&keyboard);
 
     kprintf("Setting up Mouse...\n");

@@ -8,10 +8,12 @@
 
     class KeyboardEventHandler
     {
-        KeyboardEventHandler();
+        public:
+            KeyboardEventHandler();
 
-        virtual void onKeyDown();
-        virtual void onKeyUp();
+            // TODO: This should probably be a keycode enum, but a char is fine to get up and running for now.
+            virtual void onKeyDown(char);
+            virtual void onKeyUp(char);
     };
 
     class KeyboardDriver : public InterruptHandler, public Driver
