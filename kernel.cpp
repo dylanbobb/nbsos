@@ -61,6 +61,52 @@ class KernelKeyboardEventHandler : public KeyboardEventHandler
         }
 };
 
+class KernelMouseEventHandler: public MouseEventHandler
+{
+    int8_t x,y;
+    public:
+        void onActivate()
+        {
+            x = 40;
+            y = 12;
+            static uint16_t* VMem = (uint16_t*)0xb8000;
+
+            VMem[80*12+40] = ((VMem[80*12+40] & 0xF000) >> 4) |
+                            ((VMem[80*12+40] & 0x0F00) << 4) |
+                            ((VMem[80*12+40] & 0x00FF));
+        }
+
+        void onMouseMove(int xOffset, int yOffset)
+        {
+            static uint16_t* VMem = (uint16_t*)0xb8000;
+            VMem[80*y+x] = ((VMem[80*y+x] & 0xF000) >> 4) |
+            ((VMem[80*y+x] & 0x0F00) << 4) |
+            ((VMem[80*y+x] & 0x00FF));
+
+            x += xOffset;
+            if (x < 0) x = 0;
+            if (x >= 80) x = 79;
+
+            y += yOffset;
+            if (y < 0) y = 0;
+            if (y >= 25) y = 24;
+
+            VMem[80*y+x] = ((VMem[80*y+x] & 0xF000) >> 4) |
+                        ((VMem[80*y+x] & 0x0F00) << 4) |
+                        ((VMem[80*y+x] & 0x00FF));
+        }
+
+        void onMouseDown(uint8_t button)
+        {
+            kprintf("Mouse down\n");
+        }
+
+        void onMouseUp(uint8_t button)
+        {
+            kprintf("Mouse up\n");
+        }
+};
+
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
 extern "C" constructor end_ctors;
@@ -92,7 +138,8 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     driverManager.addDriver(&keyboard);
 
     kprintf("Setting up Mouse...\n");
-    MouseDriver mouse(&interrupts);
+    KernelMouseEventHandler mouseHandler;
+    MouseDriver mouse(&interrupts, &mouseHandler);
     driverManager.addDriver(&mouse);
 
     kprintf("Activating Drivers...\n");

@@ -2,11 +2,32 @@
 
 void kprintf(char*);
 
-MouseDriver::MouseDriver(InterruptManager* manager)
+MouseEventHandler::MouseEventHandler()
+{
+}
+
+void MouseEventHandler::onMouseMove(int xOffset, int yOffset)
+{
+}
+
+void MouseEventHandler::onMouseDown(uint8_t button)
+{
+}
+
+void MouseEventHandler::onMouseUp(uint8_t button)
+{
+}
+
+void MouseEventHandler::onActivate()
+{
+}
+
+MouseDriver::MouseDriver(InterruptManager* manager, MouseEventHandler* handler)
 : InterruptHandler(0x2C, manager),
   dataPort(0x60),
   commandPort(0x64)
 {
+    this->handler = handler;
 }
 
 void MouseDriver::activate()
@@ -14,11 +35,7 @@ void MouseDriver::activate()
     offset = 0;
     buttons = 0;
 
-    static uint16_t* VMem = (uint16_t*)0xb8000;
-
-    VMem[80*12+40] = ((VMem[80*12+40] & 0xF000) >> 4) |
-                    ((VMem[80*12+40] & 0x0F00) << 4) |
-                    ((VMem[80*12+40] & 0x00FF));
+    handler->onActivate();
 
     commandPort.write(0xAB); // interrupts
     commandPort.write(0x20); // get current state
@@ -40,41 +57,29 @@ uint32_t MouseDriver::handleInterrupt(uint32_t esp)
     if (!(status & 0x20))
         return esp;
 
-
-    static int8_t x=40,y=12;
-
     buffer[offset] = dataPort.read();
+
+    if (handler == 0)
+    {
+        return esp;
+    }
+    
     offset = (offset + 1) % 3;
 
     if (offset == 0)
     {
-        static uint16_t* VMem = (uint16_t*)0xb8000;
-
-        VMem[80*y+x] = ((VMem[80*y+x] & 0xF000) >> 4) |
-                       ((VMem[80*y+x] & 0x0F00) << 4) |
-                       ((VMem[80*y+x] & 0x00FF));
-
-        x += buffer[1];
-        if (x < 0) x = 0;
-        if (x >= 80) x = 79;
-
-        y -= buffer[2];
-        if (y < 0) y = 0;
-        if (y >= 25) y = 24;
-
-        VMem[80*y+x] = ((VMem[80*y+x] & 0xF000) >> 4) |
-                       ((VMem[80*y+x] & 0x0F00) << 4) |
-                       ((VMem[80*y+x] & 0x00FF));
-
+        if (buffer[1] != 0 || buffer[2] != 0)
+        {
+            handler->onMouseMove(buffer[1],-buffer[2]);
+        }
         for (uint8_t i = 0; i < 3; i++)
         {
-            if ((buffer[0] & (0x1 << i)) && !(buttons & (0x1 << i)))
+            if ((buffer[0] & (0x1 << i)) != (buttons & (0x1 << i)))
             {
-                kprintf("Mouse button pressed\n");
-            }
-            else if (!(buffer[0] & (0x1 << i)) && (buttons & (0x1 << i)))
-            {
-                kprintf("Mouse button released\n");
+                if (buttons & (0x1 << i))
+                    handler->onMouseUp(i + 1);
+                else
+                    handler->onMouseDown(i + 1);
             }
         }
         buttons = buffer[0];
