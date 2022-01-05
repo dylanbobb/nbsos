@@ -2,18 +2,18 @@
 
 .section .text
 
-.extern _ZN16InterruptManager15handleInterruptEhj # TODO: don't want an extern C name here, find out why later
+.extern _ZN5NBSOS8Hardware16InterruptManager15handleInterruptEhj
 
 .macro handleException num
-.global _ZN16InterruptManager16handleException\num\()Ev
-_ZN16InterruptManager16handleException\num\()Ev:
+.global _ZN5NBSOS8Hardware16InterruptManager15handleException\num\()Ev
+_ZN5NBSOS8Hardware16InterruptManager15handleException\num\()Ev:
     movb $\num, (interruptnumber)
     jmp int_bottom
 .endm
 
 .macro handleInterruptRequest num
-.global _ZN16InterruptManager26handleInterruptRequest\num\()Ev
-_ZN16InterruptManager26handleInterruptRequest\num\()Ev:
+.global _ZN5NBSOS8Hardware16InterruptManager26handleInterruptRequest\num\()Ev
+_ZN5NBSOS8Hardware16InterruptManager26handleInterruptRequest\num\()Ev:
     movb $\num + IRQ_BASE, (interruptnumber)
     jmp int_bottom
 .endm
@@ -33,7 +33,7 @@ int_bottom:
 
     pushl %esp
     push (interruptnumber)
-    call _ZN16InterruptManager15handleInterruptEhj
+    call _ZN5NBSOS8Hardware16InterruptManager15handleInterruptEhj
     movl %eax, %esp
 
     # restore processor state after interrupt
@@ -43,8 +43,8 @@ int_bottom:
     popl %ds
     popa
 
-.global _ZN16InterruptManager22ignoreInterruptRequestEv
-_ZN16InterruptManager22ignoreInterruptRequestEv:
+.global _ZN5NBSOS8Hardware16InterruptManager22ignoreInterruptRequestEv
+_ZN5NBSOS8Hardware16InterruptManager22ignoreInterruptRequestEv:
     iret
 
 .data

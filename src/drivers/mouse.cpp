@@ -1,4 +1,8 @@
-#include "mouse.h"
+#include <drivers/mouse.h>
+
+using namespace NBSOS::Common;
+using namespace NBSOS::Drivers;
+using namespace NBSOS::Hardware;
 
 void kprintf(char*);
 

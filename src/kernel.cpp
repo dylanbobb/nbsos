@@ -1,9 +1,14 @@
-#include "types.h"
-#include "gdt.h"
-#include "interrupts.h"
-#include "driver.h"
-#include "keyboard.h"
-#include "mouse.h"
+#include <common/types.h>
+#include <gdt.h>
+#include <hardware/interrupts.h>
+#include <drivers/driver.h>
+#include <drivers/keyboard.h>
+#include <drivers/mouse.h>
+
+using namespace NBSOS;
+using namespace NBSOS::Common;
+using namespace NBSOS::Drivers;
+using namespace NBSOS::Hardware;
 
 void kprintf(char* str)
 {

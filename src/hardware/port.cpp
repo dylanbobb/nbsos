@@ -1,4 +1,7 @@
-#include "port.h"
+#include <hardware/port.h>
+
+using namespace NBSOS::Common;
+using namespace NBSOS::Hardware;
 
 Port::Port(uint16_t portNumber)
 {

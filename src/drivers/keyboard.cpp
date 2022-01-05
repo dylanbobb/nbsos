@@ -1,4 +1,8 @@
-#include "keyboard.h"
+#include <drivers/keyboard.h>
+
+using namespace NBSOS::Common;
+using namespace NBSOS::Drivers;
+using namespace NBSOS::Hardware;
 
 void kprintf(char*);
 void kprintHex(uint8_t);

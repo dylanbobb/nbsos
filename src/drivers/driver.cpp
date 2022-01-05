@@ -1,4 +1,5 @@
-#include "driver.h"
+#include <drivers/driver.h>
+using namespace NBSOS::Drivers;
 
 Driver::Driver()
 {

@@ -1,9 +1,7 @@
-#include "gdt.h"
+#include <gdt.h>
 
-// Warning: Massive fuckery ahead.
-// This is a mess.
-// I'm sorry.
-// GDTS are terrible to implement, and I blindly followed a guide.
+using namespace NBSOS;
+using namespace NBSOS::Common;
 
 GlobalDescriptorTable::GlobalDescriptorTable()
     : nullSegmentSelector(0,0,0)

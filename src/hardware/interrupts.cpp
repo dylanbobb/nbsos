@@ -1,4 +1,7 @@
-#include "interrupts.h"
+#include <hardware/interrupts.h>
+
+using namespace NBSOS::Common;
+using namespace NBSOS::Hardware;
 
 void kprintf(char* str);
 void kprintHex(uint8_t);
