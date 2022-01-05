@@ -14,8 +14,8 @@ namespace NBSOS
                 Common::uint32_t portBase;
                 Common::uint32_t interrupt;
 
-                Common::uint16_t vendorID;
-                Common::uint16_t deviceID;
+                Common::uint16_t vendorId;
+                Common::uint16_t deviceId;
 
                 Common::uint8_t classId;
                 Common::uint8_t subclassId;
