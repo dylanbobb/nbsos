@@ -69,7 +69,7 @@ void PCIController::selectDrivers(DriverManager* driverManager)
             {
                 PCIDeviceDescriptor descriptor = getDeviceDescriptor(bus, device, function);
 
-                if (descriptor.vendorId == 0x0000 || descriptor.vendorId == 0xFFFF) break;
+                if (descriptor.vendorId == 0x0000 || descriptor.vendorId == 0xFFFF) continue;
 
                 kprintf("PCI BUS ");
                 kprintHex(bus & 0xFF);
