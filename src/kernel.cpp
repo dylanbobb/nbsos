@@ -1,6 +1,7 @@
 #include <common/types.h>
 #include <gdt.h>
 #include <hardware/interrupts.h>
+#include <hardware/pci.h>
 #include <drivers/driver.h>
 #include <drivers/keyboard.h>
 #include <drivers/mouse.h>
@@ -48,7 +49,7 @@ void kprintf(char* str)
 
 void kprintHex(uint8_t hex)
 {
-    char* msg = "00\n";
+    char* msg = "00";
     char* hexStr = "0123456789ABCDEF";
     msg[0] = hexStr[(hex >> 4) & 0xF];
     msg[1] = hexStr[hex & 0xF];
@@ -147,12 +148,14 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     MouseDriver mouse(&interrupts, &mouseHandler);
     driverManager.addDriver(&mouse);
 
+    PCIController pciController;
+    pciController.selectDrivers(&driverManager);
+
     kprintf("Activating Drivers...\n");
     driverManager.activateAll();
 
     kprintf("Activating interrupts...\n");
     interrupts.activate();
-
 
     while(1);
 }
