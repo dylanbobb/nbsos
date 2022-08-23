@@ -5,6 +5,7 @@
 #include <drivers/driver.h>
 #include <drivers/keyboard.h>
 #include <drivers/mouse.h>
+#include <drivers/vga.h>
 
 using namespace NBSOS;
 using namespace NBSOS::Common;
@@ -148,14 +149,34 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     MouseDriver mouse(&interrupts, &mouseHandler);
     driverManager.addDriver(&mouse);
 
+    kprintf("Setting up PCI Controller...\n");
     PCIController pciController;
     pciController.selectDrivers(&driverManager, &interrupts);
+
+    kprintf("Setting up VGA...\n");
+    VGA vga;
 
     kprintf("Activating Drivers...\n");
     driverManager.activateAll();
 
     kprintf("Activating interrupts...\n");
     interrupts.activate();
+
+    kprintf("Switching to graphics mode...\n");
+    int i = 0;
+    while (i < 1500000000)
+    {
+        i++;
+        if (i % 100000000 == 0) kprintf(".");
+    }
+    vga.setMode(320, 200, 8);
+    for (uint32_t y = 0; y < 200; y++)
+    {
+        for (uint32_t x = 0; x < 320; x++)
+        {
+            vga.putPixel(x, y, 0x0A);
+        }
+    }
 
     while(1);
 }

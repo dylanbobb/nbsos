@@ -11,6 +11,7 @@ objects = obj/loader.o \
 		  obj/hardware/pci.o \
 		  obj/drivers/keyboard.o \
 		  obj/drivers/mouse.o \
+		  obj/drivers/vga.o \
 		  obj/kernel.o
 
 obj/%.o: src/%.cpp
@@ -41,6 +42,9 @@ kernel.iso: kernel.bin
 run: kernel.iso
 	(killall VirtualBoxVM && sleep 1) || true
 	VirtualBoxVM --startvm "nbsos" &
+
+install: kernel.bin
+		sudo cp $< /boot/kernel.bin
 
 clean: 
 	rm -f *.bin *.iso
