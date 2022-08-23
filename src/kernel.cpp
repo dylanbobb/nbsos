@@ -149,7 +149,7 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     driverManager.addDriver(&mouse);
 
     PCIController pciController;
-    pciController.selectDrivers(&driverManager);
+    pciController.selectDrivers(&driverManager, &interrupts);
 
     kprintf("Activating Drivers...\n");
     driverManager.activateAll();

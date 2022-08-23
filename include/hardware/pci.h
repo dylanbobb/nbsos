@@ -10,6 +10,21 @@ namespace NBSOS
 {
     namespace Hardware
     {
+        enum BaseAddressRegisterType 
+        {
+            MemoryMapping = 0,
+            InputOutput = 1
+        };
+
+        class BaseAddressRegister
+        {
+            public:
+                bool prefetchable;
+                Common::uint8_t* address;
+                Common::uint32_t size;
+                BaseAddressRegisterType type;
+        };
+
         class PCIDeviceDescriptor
         {
             public:
@@ -46,8 +61,10 @@ namespace NBSOS
                 void write(Common::uint16_t bus, Common::uint16_t device, Common::uint16_t function, Common::uint32_t registerOffset, Common::uint32_t value);
                 bool deviceHasFunctions(Common::uint16_t bus, Common::uint16_t device);
 
-                void selectDrivers(NBSOS::Drivers::DriverManager* driverManager);
+                void selectDrivers(Drivers::DriverManager* driverManager, Hardware::InterruptManager* interrupt);
+                Drivers::Driver* getDriver(PCIDeviceDescriptor descriptor, Hardware::InterruptManager* interrupt);
                 PCIDeviceDescriptor getDeviceDescriptor(Common::uint16_t bus, Common::uint16_t device, Common::uint16_t function);
+                BaseAddressRegister getBaseAddressRegister(Common::uint16_t bus, Common::uint16_t device, Common::uint16_t function, Common::uint16_t bar);
         };
     }
 }
