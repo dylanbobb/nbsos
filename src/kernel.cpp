@@ -189,13 +189,7 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     }
     clearScreen();
     vga.setMode(320, 200, 8);
-    for (uint32_t y = 0; y < 200; y++)
-    {
-        for (uint32_t x = 0; x < 320; x++)
-        {
-            vga.putPixel(x, y, 0x0A);
-        }
-    }
+    vga.fillRectangle(0, 0, 320, 200, 0x00, 0x00, 0xA8);
 
     while(1);
 }

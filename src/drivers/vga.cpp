@@ -134,3 +134,10 @@ void VGA::putPixel(uint32_t x, uint32_t y, uint8_t r, uint8_t g, uint8_t b)
 {
     putPixel(x, y, getColorIndex(r, g, b));
 }
+
+void VGA::fillRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t r, uint8_t g, uint8_t b)
+{
+    for (uint32_t Y = y; Y < y + h; Y++)
+        for (uint32_t X = x; X < x + w; X++)
+            putPixel(X, Y, r, g, b);
+}
