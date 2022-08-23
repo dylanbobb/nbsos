@@ -148,7 +148,7 @@ Driver* PCIController::getDriver(PCIDeviceDescriptor descriptor, InterruptManage
             switch (descriptor.deviceId)
             {
                 case 0x2000:
-                    kprintf("AMD am79c973 ");
+                    // kprintf("AMD am79c973 ");
                     break;
             }
             break;
@@ -164,7 +164,7 @@ Driver* PCIController::getDriver(PCIDeviceDescriptor descriptor, InterruptManage
             switch (descriptor.subclassId)
             {
                 case 0x00:
-                    kprintf("VGA ");
+                    // kprintf("VGA ");
                     break;
             }
             break;
