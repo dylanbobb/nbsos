@@ -12,12 +12,12 @@ using namespace NBSOS::Common;
 using namespace NBSOS::Drivers;
 using namespace NBSOS::Hardware;
 
+static uint8_t x = 0;
+static uint8_t y = 0;
+
 void kprintf(char* str)
 {
     static uint16_t* VMem = (uint16_t*)0xb8000;
-
-    static uint8_t x = 0;
-    static uint8_t y = 0;
 
     for (int32_t i = 0; str[i] != '\0'; i++)
     {
@@ -46,6 +46,16 @@ void kprintf(char* str)
             y = 0;
         }
     }
+}
+
+void clearScreen()
+{
+    static uint16_t* VMem = (uint16_t*)0xb8000;
+    for (y = 0; y < 25; y++)
+        for (x = 0; x < 80; x++)
+            VMem[80*y+x] = (VMem[80*y+x] & 0xFF00) | ' ';
+    x = 0;
+    y = 0;
 }
 
 void kprintHex(uint8_t hex)
@@ -127,7 +137,15 @@ extern "C" void callConstructors()
 
 extern "C" void kmain(void* multiboot_structure, uint32_t magic)
 {
-    kprintf("Welcome to NBSOS!\n");
+    kprintf("__    __  _______    ______    ______    ______  \n/  \\  /  |/       \\  /      \\  /      \\  /      \\ \n$$  \\ $$ |$$$$$$$  |/$$$$$$  |/$$$$$$  |/$$$$$$  |\n$$$  \\$$ |$$ |__$$ |$$ \\__$$/ $$ |  $$ |$$ \\__$$/ \n$$$$  $$ |$$    $$< $$      \\ $$ |  $$ |$$      \\ \n$$ $$ $$ |$$$$$$$  | $$$$$$  |$$ |  $$ | $$$$$$  |\n$$ |$$$$ |$$ |__$$ |/  \\__$$ |$$ \\__$$ |/  \\__$$ |\n$$ | $$$ |$$    $$/ $$    $$/ $$    $$/ $$    $$/ \n$$/   $$/ $$$$$$$/   $$$$$$/   $$$$$$/   $$$$$$/\n");
+    kprintf("\n\nBy: Dylan Bobb\n\n");
+    int i = 0;
+    while (i < 2000000000)
+    {
+        i++;
+        if (i % 100000000 == 0) kprintf(".");
+    }
+    clearScreen();
     kprintf("Getting things setup...\n");
 
     kprintf("Setting up GDT...\n");
@@ -163,12 +181,13 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     interrupts.activate();
 
     kprintf("Switching to graphics mode...\n");
-    int i = 0;
-    while (i < 1500000000)
+    i = 0;
+    while (i < 2000000000)
     {
         i++;
         if (i % 100000000 == 0) kprintf(".");
     }
+    clearScreen();
     vga.setMode(320, 200, 8);
     for (uint32_t y = 0; y < 200; y++)
     {
