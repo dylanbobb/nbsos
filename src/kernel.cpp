@@ -7,6 +7,7 @@
 #include <drivers/mouse.h>
 #include <drivers/vga.h>
 #include <gui/desktop.h>
+#include <gui/window.h>
 
 using namespace NBSOS;
 using namespace NBSOS::Common;
@@ -186,6 +187,12 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
 
     kprintf("Activating interrupts...\n");
     interrupts.activate();
+
+    kprintf("Creating windows...\n");
+    Window window1(&desktop, 10, 10, 20, 20, 0xA8, 0x00, 0x00);
+    desktop.addChild(&window1);
+    Window window2(&desktop, 40, 15, 30, 20, 0x00, 0xA8, 0x00);
+    desktop.addChild(&window2);
 
     kprintf("Switching to graphics mode...\n");
     i = 0;
