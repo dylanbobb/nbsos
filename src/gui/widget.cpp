@@ -4,6 +4,7 @@ using namespace NBSOS::Common;
 using namespace NBSOS::GUI;
 
 Widget::Widget(Widget* parent, int32_t x, int32_t y, int32_t w, int32_t h, int8_t r, int8_t g, int8_t b)
+: KeyboardEventHandler()
 {
     this->parent = parent;
     this->x = x;
@@ -42,13 +43,13 @@ void Widget::draw(GraphicsContext* gc)
     gc->fillRectangle(X, Y, w, h, r, g, b);
 }
 
-void Widget::onMouseDown(int32_t x, int32_t y)
+void Widget::onMouseDown(int32_t x, int32_t y, uint8_t button)
 {
     if (focusable)
         getFocus(this);
 }
 
-void Widget::onMouseUp(int32_t x, int32_t y)
+void Widget::onMouseUp(int32_t x, int32_t y, uint8_t button)
 {
 
 }
@@ -58,17 +59,14 @@ void Widget::onMouseMove(int32_t oldx, int32_t oldy, int32_t newx, int32_t newy)
 
 }
 
-void Widget::onKeyDown(char str)
+bool Widget::containsCoordinate(int32_t x, int32_t y)
 {
-
-}
-
-void Widget::onKeyUp(char str)
-{
-
+    return this->x <= x && x < this->x + this-> w
+        && this->y <= y && y < this->y + this->h; 
 }
 
 CompositeWidget::CompositeWidget(Widget* parent, int32_t x, int32_t y, int32_t w, int32_t h, int8_t r, int8_t g, int8_t b)
+: Widget(parent, x, y, w, h, r, g, b)
 {
     focusedChild = 0;
     numChildren = 0;
@@ -84,6 +82,13 @@ void CompositeWidget::getFocus(Widget* widget)
     focusedChild = widget;
     if (parent != 0)
         parent->getFocus(this);
+}
+
+bool CompositeWidget::addChild(Widget* child)
+{
+    if (numChildren >= 100) return false;
+    children[numChildren++] = child;
+    return true;
 }
 
 void CompositeWidget::draw(GraphicsContext* gc)
@@ -105,25 +110,25 @@ void CompositeWidget::onKeyUp(char str)
         focusedChild->onKeyUp(str);
 }
 
-void CompositeWidget::onMouseDown(int32_t x, int32_t y)
+void CompositeWidget::onMouseDown(int32_t x, int32_t y, uint8_t button)
 {
     for (int i = 0; i < numChildren; i++)
     {
         if (children[i]->containsCoordinate(x - this->x, y - this->y))
         {
-            children[i]->onMouseDown(x - this->x, y - this->y);
+            children[i]->onMouseDown(x - this->x, y - this->y, button);
             break;
         }
     }    
 }
 
-void CompositeWidget::onMouseUp(int32_t x, int32_t y)
+void CompositeWidget::onMouseUp(int32_t x, int32_t y, uint8_t button)
 {
     for (int i = 0; i < numChildren; i++)
     {
         if (children[i]->containsCoordinate(x - this->x, y - this->y))
         {
-            children[i]->onMouseUp(x - this->x, y - this->y);
+            children[i]->onMouseUp(x - this->x, y - this->y, button);
             break;
         }
     }    

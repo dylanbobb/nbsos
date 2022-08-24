@@ -6,11 +6,13 @@
 #include <drivers/keyboard.h>
 #include <drivers/mouse.h>
 #include <drivers/vga.h>
+#include <gui/desktop.h>
 
 using namespace NBSOS;
 using namespace NBSOS::Common;
 using namespace NBSOS::Drivers;
 using namespace NBSOS::Hardware;
+using namespace NBSOS::GUI;
 
 static uint8_t x = 0;
 static uint8_t y = 0;
@@ -154,17 +156,22 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     kprintf("Setting up IDT...\n");
     InterruptManager interrupts(&gdt);
 
+    kprintf("Setting up Desktop...\n");
+    Desktop desktop(320, 200, 0x00, 0x00, 0xA8);
+
     kprintf("Setting up Driver Management...\n");
     DriverManager driverManager;
 
     kprintf("Setting up Keyboard...\n");
-    KernelKeyboardEventHandler keyboardHandler;
-    KeyboardDriver keyboard(&interrupts, &keyboardHandler);
+    // KernelKeyboardEventHandler keyboardHandler;
+    // KeyboardDriver keyboard(&interrupts, &keyboardHandler); // uncomment these for text mode keyboard
+    KeyboardDriver keyboard(&interrupts, &desktop);
     driverManager.addDriver(&keyboard);
 
     kprintf("Setting up Mouse...\n");
-    KernelMouseEventHandler mouseHandler;
-    MouseDriver mouse(&interrupts, &mouseHandler);
+    // KernelMouseEventHandler mouseHandler;
+    // MouseDriver mouse(&interrupts, &mouseHandler); // uncomment these for text mode mouse
+    MouseDriver mouse(&interrupts, &desktop);
     driverManager.addDriver(&mouse);
 
     kprintf("Setting up PCI Controller...\n");
@@ -189,7 +196,10 @@ extern "C" void kmain(void* multiboot_structure, uint32_t magic)
     }
     clearScreen();
     vga.setMode(320, 200, 8);
-    vga.fillRectangle(0, 0, 320, 200, 0x00, 0x00, 0xA8);
 
-    while(1);
+    while(1)
+    {
+        // TODO: This is a terrible idea once we allow for multi-threading
+        desktop.draw(&vga);
+    }
 }

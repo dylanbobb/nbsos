@@ -33,8 +33,8 @@ namespace NBSOS
 
                 virtual bool supportsMode(Common::uint32_t width, Common::uint32_t height, Common::uint32_t colorDepth);
                 virtual bool setMode(Common::uint32_t width, Common::uint32_t height, Common::uint32_t colorDepth);
-                virtual void putPixel(Common::uint32_t x, Common::uint32_t y, Common::uint8_t r, Common::uint8_t g, Common::uint8_t b);
-                virtual void putPixel(Common::uint32_t x, Common::uint32_t y, Common::uint8_t colorIndex);
+                virtual void putPixel(Common::int32_t x, Common::int32_t y, Common::uint8_t r, Common::uint8_t g, Common::uint8_t b);
+                virtual void putPixel(Common::int32_t x, Common::int32_t y, Common::uint8_t colorIndex);
                 virtual void fillRectangle(Common::uint32_t x, Common::uint32_t y, Common::uint32_t w, Common::uint32_t h, Common::uint8_t r, Common::uint8_t g, Common::uint8_t b);
         };
     }

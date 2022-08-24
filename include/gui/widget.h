@@ -3,12 +3,14 @@
 
 #include <common/types.h>
 #include <common/graphicscontext.h>
+#include <drivers/keyboard.h>
+#include <drivers/mouse.h>
 
 namespace NBSOS
 {
     namespace GUI
     {
-        class Widget
+        class Widget : public Drivers::KeyboardEventHandler
         {
             protected:
                 Widget* parent;
@@ -33,11 +35,10 @@ namespace NBSOS
                 virtual void getFocus(Widget* Widget);
                 virtual void modelToScreen(Common::int32_t &x, Common::int32_t &y);
                 virtual void draw(Common::GraphicsContext *gc);
-                virtual void onMouseDown(Common::int32_t x, Common::int32_t y);
-                virtual void onMouseUp(Common::int32_t x, Common::int32_t y);
+                virtual void onMouseDown(Common::int32_t x, Common::int32_t y, Common::uint8_t button);
+                virtual void onMouseUp(Common::int32_t x, Common::int32_t y, Common::uint8_t button);
                 virtual void onMouseMove(Common::int32_t oldx, Common::int32_t oldy, Common::int32_t newx, Common::int32_t newy);
-                virtual void onKeyDown(char);
-                virtual void onKeyUp(char);
+                virtual bool containsCoordinate(Common::int32_t x, Common::int32_t y);
         };
 
         class CompositeWidget : public Widget
@@ -56,10 +57,11 @@ namespace NBSOS
                                 Common::int8_t g, 
                                 Common::int8_t b);
                 ~CompositeWidget();
-                virtual void getFocus(Widget* Widget);
+                virtual void getFocus(Widget* widget);
+                virtual bool addChild(Widget* child);
                 virtual void draw(Common::GraphicsContext *gc);
-                virtual void onMouseDown(Common::int32_t x, Common::int32_t y);
-                virtual void onMouseUp(Common::int32_t x, Common::int32_t y);
+                virtual void onMouseDown(Common::int32_t x, Common::int32_t y,Common::uint8_t button);
+                virtual void onMouseUp(Common::int32_t x, Common::int32_t y, Common::uint8_t button);
                 virtual void onMouseMove(Common::int32_t oldx, Common::int32_t oldy, Common::int32_t newx, Common::int32_t newy);
                 virtual void onKeyDown(char);
                 virtual void onKeyUp(char);
